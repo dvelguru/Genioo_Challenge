@@ -1,0 +1,79 @@
+@import url('responsive.css');
+
+body {
+	background-color: #FAFAFA;
+	font-family: 'Roboto','Helvetica','Arial',sans-serif;
+}
+
+#view-source {
+	bottom: 0;
+	display: block;
+	margin-bottom: 20px;
+	margin-right: 20px;
+	position: fixed;
+	right: 0;
+	z-index: 900;
+}
+
+/*Set Form  modal width of Dialog because the default is too small*/
+.mdl-dialog {
+	width: 90%;
+}
+
+/*Set Form input field width in Dialog because the default is too small*/
+.mdl-dialog .mdl-textfield {
+	width: 100%;
+}
+
+/*Center progress bar*/
+.mdl-progress {
+	margin: 0 auto;
+}
+
+/*Override default hidden search field by increasing width.*/
+#search-textfield-container {
+	max-width: 600px;
+}
+
+/*Set width of table column containing checkbox when mdl-data-table--selectable is an active class.*/
+.mdl-data-table td:first-of-type,
+.mdl-data-table th:first-of-type {
+	width: 50px;
+}
+
+/*Configure left padding to equal right padding of header row when menu icon is not visible in mobile first design.*/
+.mdl-layout__header-row {
+	padding-left: 16px;
+	padding-right: 16px;
+}
+
+.mdl-data-table {
+	border: none;
+	margin: 0 auto;
+	width: 100%;
+}
+
+.mdl-data-table__cell--large-screen-only {
+	display: none;
+}
+
+.mdl-data-table tbody tr.is-selected {
+	background-color: #f1edfe;
+}
+
+/*Media queries for >= desktop-small*/
+@media only screen and (min-width: 768px) {
+	.mdl-data-table__cell--large-screen-only {
+		display: table-cell !important;
+	}
+
+	.mdl-dialog {
+		width: 50%;
+	}
+}
+
+/*Browser version compatability*/
+/*IE 11 placeholder color*/
+:-ms-input-placeholder {
+    color: #777777;
+}
