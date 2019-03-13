@@ -20,31 +20,31 @@ class Contact
 		$stmt->execute();
 		$result = $stmt->get_result();
 
-		return $result->fetch_all(MYSQLI_ASSOC);
+		return $this->fetch_all($result);
 	}
 
 	public function findById($id = null)
 	{
-		$query = Database::getInstance()->getConnection()->query(sprintf("
+		$result = Database::getInstance()->getConnection()->query(sprintf("
 			SELECT contacts.id, contacts.firstname, contacts.lastname, contacts.email, contacts.phone, companies.name AS company
 			FROM contacts
 			LEFT JOIN companies ON companies.id = contacts.company_id
 			WHERE contacts.id = '%s'
 		", $id));
 
-		return $query->fetch_all(MYSQLI_ASSOC);
+		return $this->fetch_all($result);
 	}
 
 	public function getAllContacts($offset = 0, $limit = 1000)
 	{
-		$query = Database::getInstance()->getConnection()->query(sprintf("
+		$result = Database::getInstance()->getConnection()->query(sprintf("
 			SELECT contacts.id, contacts.firstname, contacts.lastname, contacts.email, contacts.phone, companies.name AS company
 			FROM contacts
 			LEFT JOIN companies ON companies.id = contacts.company_id
 			LIMIT %d, %d
 		", $offset, $limit));
 
-		return $query->fetch_all(MYSQLI_ASSOC);
+		return $this->fetch_all($result);
 	}
 
 	public function create($data = [])
@@ -79,6 +79,15 @@ class Contact
 		");
 		$stmt->bind_param("s", $id);
 		$stmt->execute();
+	}
+
+	private function fetch_all($result)
+	{
+		$rows = [];
+		while ($row = $result->fetch_assoc()) {
+			$rows[] = $row;
+		}
+		return $rows;
 	}
 
 	private function generateRandomString($length = 18) {
