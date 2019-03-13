@@ -4,9 +4,9 @@ class Database
 {
 	private $connection;
 	private $host = "127.0.0.1";
-	private $database = "genioo_challenge";
-	private $password = "genioo_challenge";
-	private $username = "genioo_challenge";
+	private $database = "genioo";
+	private $password = "genioo";
+	private $username = "genioo";
 	private static $instance;
 
 	public static function getInstance()
