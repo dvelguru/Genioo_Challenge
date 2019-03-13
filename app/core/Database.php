@@ -19,8 +19,7 @@ class Database
 
 	private function __construct()
 	{
-		$this->connection = new mysqli($this->host, $this->username, 
-			$this->password, $this->database);
+		$this->connection = new mysqli($this->host, $this->username, $this->password, $this->database);
 	
 		if (mysqli_connect_error()) {
 			printf("Connect failed: %s\n", mysqli_connect_error());
