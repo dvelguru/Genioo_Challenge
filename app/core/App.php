@@ -15,7 +15,7 @@ class App
 			unset($url[0]);
 		}
 		
-		require_once '../app/Controllers/'.$this->controller.'.php';
+		require_once '../app/Controllers/'.ucfirst($this->controller).'.php';
 
 		$this->controller = new $this->controller;
 
