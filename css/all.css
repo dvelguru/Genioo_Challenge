@@ -1,3 +1,5 @@
+@import url('responsive.css');
+
 body {
 	background-color: #FAFAFA;
 	font-family: 'Roboto','Helvetica','Arial',sans-serif;
@@ -26,6 +28,7 @@ body {
 /*Center progress bar*/
 .mdl-progress {
 	margin: 0 auto;
+	width: 100%;
 }
 
 /*Override default hidden search field by increasing width.*/
