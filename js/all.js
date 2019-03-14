@@ -60,10 +60,7 @@ this.actionHandler_&&(this.actionElement_.textContent=this.actionText_,this.acti
 		}
 	}
 
-	function updateDataTable(jsonObject) {
-		var dataTable = document.getElementById('contacts-data-table');
-		var dataTableBody = dataTable.getElementsByTagName('tbody')[0];
-		
+	function updateDataTable(jsonObject) {		
 		if (dataTableBody !== undefined) {
 			dataTableBody.remove();
 		}
@@ -75,7 +72,7 @@ this.actionHandler_&&(this.actionElement_.textContent=this.actionText_,this.acti
 					let obj = jsonObject[key];
 					var company = (obj.company === null) ? '': obj.company;
 
-					body += '<tr><td class="mdl-data-table__cell--non-numeric">'+obj.firstname+'</td><td class="mdl-data-table__cell--non-numeric">'+obj.lastname+'</td><td class="mdl-data-table__cell--non-numeric mdl-data-table__cell--large-screen-only">'+obj.email+'</td><td class="mdl-data-table__cell--non-numeric mdl-data-table__cell--large-screen-only">'+obj.phone+'</td><td class="mdl-data-table__cell--non-numeric mdl-data-table__cell--large-screen-only">'+company+'</td><td class="mdl-data-table__cell--non-numeric"><button class="mdl-button mdl-js-button mdl-button--icon delete-button" data-id="'+obj.id+'"><i class="material-icons">edit</i></button><button class="mdl-button mdl-js-button mdl-button--icon delete-button" data-id="'+obj.id+'"><i class="material-icons">delete_forever</i></button></td></tr>';
+					body += `<tr><td class="mdl-data-table__cell--non-numeric">${obj.firstname}</td><td class="mdl-data-table__cell--non-numeric">${obj.lastname}</td><td class="mdl-data-table__cell--non-numeric mdl-data-table__cell--large-screen-only">${obj.email}</td><td class="mdl-data-table__cell--non-numeric mdl-data-table__cell--large-screen-only">${obj.phone}</td><td class="mdl-data-table__cell--non-numeric mdl-data-table__cell--large-screen-only">${obj.company}</td><td class="mdl-data-table__cell--non-numeric"><button class="mdl-button mdl-js-button mdl-button--icon edit-button" data-id="${obj.id}" data-firstname="${obj.firstname}" data-lastname="${obj.lastname}" data-email="${obj.email}" data-phone="${obj.phone}" data-company_id="${obj.company_id}"><i class="material-icons">edit</i></button><button class="mdl-button mdl-js-button mdl-button--icon delete-button" data-id="${obj.id}"><i class="material-icons">delete_forever</i></button></td></tr>`;
 				}
 			}
 
@@ -83,14 +80,14 @@ this.actionHandler_&&(this.actionElement_.textContent=this.actionText_,this.acti
 			dataTable.appendChild(dataTableBody);
 			dataTable.getElementsByTagName('tbody')[0].innerHTML = body;
 
-			registerTableActionButtons();
+			registerDataTableDeleteButtonEvents();
+			registerDataTableEditButtonEvents();
 		}
 	}
 
 	function progressBarDisplay(show) {
 		if (show === undefined) {
 			var progressBarTableBody = document.createElement('tbody');
-			var dataTable = document.getElementById('contacts-data-table');
 
 			dataTable.appendChild(progressBarTableBody);
 			dataTable.getElementsByTagName('tbody')[0].innerHTML = '<tr id="mdl-progress-container"><td colspan="6"><div id="p2" class="mdl-progress mdl-js-progress mdl-progress__indeterminate is-upgraded" data-upgraded=",MaterialProgress"><div class="progressbar bar bar1" style="width: 0%;"></div><div class="bufferbar bar bar2" style="width: 100%;"></div><div class="auxbar bar bar3" style="width: 0%;"></div></div></td></tr>';
@@ -113,58 +110,136 @@ this.actionHandler_&&(this.actionElement_.textContent=this.actionText_,this.acti
 		};
 	}
 	
-	document.getElementById('search-button').addEventListener('click', performSearch);
-	document.getElementById('search-textfield').addEventListener('keyup', performSearch);
-
 	/*Add New Contact Dialog*/
-	var dialog = document.querySelector('dialog');
-	var showDialogButton = document.querySelector('#show-dialog');
-	
-	if (!dialog.showModal) {
-		dialogPolyfill.registerDialog(dialog);
+	function registerContactFormDialog() {
+		if (!dialog.showModal) {
+			dialogPolyfill.registerDialog(dialog);
+		}
+		
+		showDialogButton.addEventListener('click', function() {
+			formDialogTitleEl.innerHTML = "New Contact";
+			resetContactForm();
+			dialog.showModal();
+		});
+		
+		dialog.querySelector('.submit').addEventListener('click', function() {
+			updateDataTable();
+			progressBarDisplay();
+
+			var form = document.getElementById('addContactForm');
+			var httpRequest = makeRequest('./api/create', toJSONString(form));
+				
+			httpRequest.onreadystatechange = function() {
+				if (httpRequest.readyState === XMLHttpRequest.DONE && httpRequest.status === 200) {
+					progressBarDisplay(0);
+					updateDataTable(JSON.parse(httpRequest.responseText));
+
+					dialog.close();
+				}
+			};
+		});
+		
+		dialog.querySelector('.close').addEventListener('click', function() {
+			dialog.close();
+		});
 	}
 	
-	showDialogButton.addEventListener('click', function() {
-		dialog.showModal();
-	});
-	
-	dialog.querySelector('.submit').addEventListener('click', function() {
-		updateDataTable();
-		progressBarDisplay();
-
-		var form = document.getElementById('addContactForm');
-		var httpRequest = makeRequest('./api/create', toJSONString(form));
-			
-		httpRequest.onreadystatechange = function() {
-			if (httpRequest.readyState === XMLHttpRequest.DONE && httpRequest.status === 200) {
-				progressBarDisplay(0);
-				updateDataTable(JSON.parse(httpRequest.responseText));
-
-				dialog.close();
-			}
-		};
-	});
-	
-	dialog.querySelector('.close').addEventListener('click', function() {
-		dialog.close();
-	});
 	/*Add New Contact Dialog*/
 
 	/*Delete record*/
-	function registerTableActionButtons() {
-		//This method is usefule to enable the re-registration of the action buttons when the data table is refreshed
-		var deleteButtons = document.getElementById('contacts-data-table').querySelectorAll('.delete-button');
+	//This method is used to enable the re-registration of the action buttons when the data table is refreshed
+	function registerDataTableDeleteButtonEvents() {
+		resetContactForm();
+		
+		var deleteButtons = dataTable.querySelectorAll('.delete-button');
 
 		for (var i = 0; i < deleteButtons.length; i++) {
 		    deleteButtons[i].addEventListener('click', function(e) {
-				if (confirm("Delete this record?")) {
-				    deleteRecord(e.target.parentElement.dataset.id);
+				if (confirm("Delete this contact?")) {
+		    		var id = e.target.parentElement.dataset.id;
+				    deleteRecord(id);
 				}
 		    });
 		}
 	}
-	registerTableActionButtons();
 	/*Delete record*/
+	
+
+	/*Edit record*/
+	// This method is used to enable the re-registration of the action buttons when the data table is refreshed
+	function registerDataTableEditButtonEvents() {
+		resetContactForm();
+
+		var buttons = dataTable.querySelectorAll('.edit-button');
+
+		for (var i = 0; i < buttons.length; i++) {
+		    buttons[i].addEventListener('click', function(e) {
+		    	var id = e.target.parentElement.dataset.id;
+		    	var firstname = e.target.parentElement.dataset.firstname;
+		    	var lastname = e.target.parentElement.dataset.lastname;
+		    	var email = e.target.parentElement.dataset.email;
+		    	var phone = e.target.parentElement.dataset.phone;
+		    	var company_id = e.target.parentElement.dataset.company_id;
+
+		    	// this array must follow the specific order of the input fields from the new contact form
+		    	var input = [firstname, lastname, email, phone, id];
+
+		    	
+		    	for (var e = 0; e < formInputFields.length; e++) {
+		    		var el = formInputFields[e];
+		    		el.value = input[e];
+
+		    		if (input[e] !== '') {
+			    		// inform material design lite that there is a value by adding the class is-dirty
+			    		el.parentElement.classList.add('is-dirty');
+			    	} else {
+			    		el.parentElement.classList.remove('is-dirty');
+			    	}
+		    	}
+
+	    		for (var o = 0; o < formCompanyOptionsEls.length; o++) {
+	    			var opt_el = formCompanyOptionsEls[o];
+	    			if (company_id !== '' && opt_el.value === company_id) {
+	    				opt_el.selected = "selected";
+	    				formCompanySelectEl.parentElement.classList.add('is-dirty');
+	    			}
+	    		}
+
+		    	formDialogTitleEl.innerHTML = "Edit Contact";
+				dialog.showModal();
+		    });
+		}
+	}
+	
+	function resetContactForm() {
+		formCompanySelectEl.querySelector('option').selected = "selected";
+		formCompanySelectEl.parentElement.classList.remove('is-dirty');
+
+		for (var e = 0; e < formInputFields.length; e++) {
+    		var el = formInputFields[e];
+    		el.value = '';
+    		el.parentElement.classList.remove('is-dirty');
+    	}
+	}
+	/*Edit record*/
+
+	var form = document.getElementById('addContactForm');
+	var formCompanySelectEl = document.getElementById('company');
+	var formDialogTitleEl = document.getElementById('mdl-dialog__title');
+	var formInputFields = form.querySelectorAll('input');
+	var formCompanyOptionsEls = formCompanySelectEl.querySelectorAll('option');
+	var dataTable = document.getElementById('contacts-data-table');
+	var dataTableBody = dataTable.getElementsByTagName('tbody')[0];
+	var dialog = document.querySelector('dialog');
+	var showDialogButton = document.querySelector('#show-dialog');
+
+	document.getElementById('search-button').addEventListener('click', performSearch);
+	document.getElementById('search-textfield').addEventListener('keyup', performSearch);
+
+	registerDataTableDeleteButtonEvents();
+	registerDataTableEditButtonEvents();
+	registerContactFormDialog();
+
 
 })();
 /**/

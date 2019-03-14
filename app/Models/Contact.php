@@ -5,8 +5,8 @@ class Contact
 	/*There are methods with repetative strings that can be stored in a model helper.*/
 	public function findByString($string)
 	{
-		$stmt = Database::getInstance()->getConnection()->prepare('
-			SELECT contacts.id, contacts.firstname, contacts.lastname, contacts.email, contacts.phone, companies.name AS company
+		$stmt = Database::getInstance()->getConnection()->prepare("
+			SELECT contacts.id, contacts.firstname, contacts.lastname, contacts.email, contacts.phone, contacts.company_id, IFNULL(companies.name, '') AS company
 			FROM contacts
 			LEFT JOIN companies ON companies.id = contacts.company_id
 			WHERE contacts.firstname LIKE ?
@@ -14,7 +14,7 @@ class Contact
 			OR contacts.email LIKE ?
 			OR contacts.phone LIKE ?
 			OR companies.name LIKE ?
-		');
+		");
 		$string = "%{$string}%";
 		$stmt->bind_param("sssss", $string, $string, $string, $string, $string);
 		$stmt->execute();
@@ -26,7 +26,7 @@ class Contact
 	public function findById($id = null)
 	{
 		$query = Database::getInstance()->getConnection()->query(sprintf("
-			SELECT contacts.id, contacts.firstname, contacts.lastname, contacts.email, contacts.phone, companies.name AS company
+			SELECT contacts.id, contacts.firstname, contacts.lastname, contacts.email, contacts.phone, contacts.company_id, IFNULL(companies.name, '') AS company
 			FROM contacts
 			LEFT JOIN companies ON companies.id = contacts.company_id
 			WHERE contacts.id = '%s'
@@ -38,7 +38,7 @@ class Contact
 	public function getAllContacts($offset = 0, $limit = 1000)
 	{
 		$query = Database::getInstance()->getConnection()->query(sprintf("
-			SELECT contacts.id, contacts.firstname, contacts.lastname, contacts.email, contacts.phone, companies.name AS company
+			SELECT contacts.id, contacts.firstname, contacts.lastname, contacts.email, contacts.phone, contacts.company_id, IFNULL(companies.name, '') AS company
 			FROM contacts
 			LEFT JOIN companies ON companies.id = contacts.company_id
 			LIMIT %d, %d
@@ -61,14 +61,17 @@ class Contact
 		return $new_id;
 	}
 
-	public function update($data = null)
+	public function update($data = [])
 	{
 		$stmt = Database::getInstance()->getConnection()->prepare("
 			UPDATE contacts
-			SET id = ?, firstname = ?, lastname = ?, email = ?, phone = ?, company_id = ?
+			SET contacts.firstname = ?, contacts.lastname = ?, contacts.email = ?, contacts.phone = ?, contacts.company_id = ?
+			WHERE contacts.id = ?
 		");
-		$stmt->bind_param("ssssss", $data['id'], $data['firstname'], $data['lastname'], $data['email'], $data['phone'], $data['company_id']);
+		$stmt->bind_param("ssssss", $data['firstname'], $data['lastname'], $data['email'], $data['phone'], $data['company_id'], $data['id']);
 		$stmt->execute();
+
+		return $data['id'];
 	}
 
 	public function delete($id = null)

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>My Contacts</title>
+		<title>Genioo Challenge - My Contacts</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Roboto:300,400,500,700">
 		<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
@@ -21,7 +21,7 @@
 	<body>
 
 		<dialog class="mdl-dialog">
-			<h4 class="mdl-dialog__title">New Contact</h4>
+			<h4 class="mdl-dialog__title" id="mdl-dialog__title">New Contact</h4>
 			<div class="mdl-dialog__content">
 				<form action="#" id="addContactForm">
 					<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -56,6 +56,7 @@
 						</select>
 						<label class="mdl-textfield__label" for="company">Company</label>
 					</div>
+					<input type="hidden" name="id" value="">
 				</form>
 			</div>
 			<div class="mdl-dialog__actions">
@@ -109,7 +110,7 @@
 											<td class="mdl-data-table__cell--non-numeric mdl-data-table__cell--large-screen-only"><?= $v['phone'] ?></td>
 											<td class="mdl-data-table__cell--non-numeric mdl-data-table__cell--large-screen-only"><?= $v['company'] ?></td>
 											<td class="mdl-data-table__cell--non-numeric">
-												<button class="mdl-button mdl-js-button mdl-button--icon edit-button" data-id="<?= $v['id'] ?>">
+												<button class="mdl-button mdl-js-button mdl-button--icon edit-button" data-id="<?= $v['id'] ?>" data-firstname="<?= $v['firstname'] ?>" data-lastname="<?= $v['lastname'] ?>" data-email="<?= $v['email'] ?>" data-phone="<?= $v['phone'] ?>" data-company_id="<?= $v['company_id'] ?>">
 													<i class="material-icons">edit</i>
 												</button>
 												<button class="mdl-button mdl-js-button mdl-button--icon delete-button" data-id="<?= $v['id'] ?>">
@@ -131,9 +132,6 @@
 				</div>
 			</main>
 		</div>
-
-		
-
 
 		<a href="https://github.com/dvelguru" id="view-source" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" target="_blank">View Source</a>
 

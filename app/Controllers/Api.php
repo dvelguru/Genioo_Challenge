@@ -22,7 +22,15 @@ class Api extends Controller
 	{
 		if (isset($_POST['query'])) {
 			$contact = $this->model('Contact');
-			$id = $contact->create(json_decode($_POST['query'], true));
+			$formData = json_decode($_POST['query'], true);
+
+			if ($formData['id'] !== '') {
+				if (count($contact->findById($formData['id'])) == 1) {
+					$id = $contact->update($formData);
+				}
+			} else {
+				$id = $contact->create($formData);
+			}
 
 			echo json_encode($contact->findById($id));
 		}
