@@ -75,7 +75,7 @@ this.actionHandler_&&(this.actionElement_.textContent=this.actionText_,this.acti
 					let obj = jsonObject[key];
 					var company = (obj.company === null) ? '': obj.company;
 
-					body += '<tr><td class="mdl-data-table__cell--non-numeric">'+obj.firstname+'</td><td class="mdl-data-table__cell--non-numeric">'+obj.lastname+'</td><td class="mdl-data-table__cell--non-numeric">'+obj.email+'</td><td class="mdl-data-table__cell--non-numeric mdl-data-table__cell--large-screen-only">'+obj.phone+'</td><td class="mdl-data-table__cell--non-numeric mdl-data-table__cell--large-screen-only">'+company+'</td><td class="mdl-data-table__cell--non-numeric"><button class="mdl-button mdl-js-button mdl-button--icon delete-button" data-id="'+obj.id+'"><i class="material-icons">edit</i></button><button class="mdl-button mdl-js-button mdl-button--icon delete-button" data-id="'+obj.id+'"><i class="material-icons">delete_forever</i></button></td></tr>';
+					body += '<tr><td class="mdl-data-table__cell--non-numeric">'+obj.firstname+'</td><td class="mdl-data-table__cell--non-numeric">'+obj.lastname+'</td><td class="mdl-data-table__cell--non-numeric mdl-data-table__cell--large-screen-only">'+obj.email+'</td><td class="mdl-data-table__cell--non-numeric mdl-data-table__cell--large-screen-only">'+obj.phone+'</td><td class="mdl-data-table__cell--non-numeric mdl-data-table__cell--large-screen-only">'+company+'</td><td class="mdl-data-table__cell--non-numeric"><button class="mdl-button mdl-js-button mdl-button--icon delete-button" data-id="'+obj.id+'"><i class="material-icons">edit</i></button><button class="mdl-button mdl-js-button mdl-button--icon delete-button" data-id="'+obj.id+'"><i class="material-icons">delete_forever</i></button></td></tr>';
 				}
 			}
 
