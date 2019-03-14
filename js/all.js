@@ -90,7 +90,7 @@ this.actionHandler_&&(this.actionElement_.textContent=this.actionText_,this.acti
 			var progressBarTableBody = document.createElement('tbody');
 
 			dataTable.appendChild(progressBarTableBody);
-			dataTable.getElementsByTagName('tbody')[0].innerHTML = '<tr id="mdl-progress-container"><td colspan="3"><div id="p2" class="mdl-progress mdl-js-progress mdl-progress__indeterminate is-upgraded" data-upgraded=",MaterialProgress"><div class="progressbar bar bar1" style="width: 0%;"></div><div class="bufferbar bar bar2" style="width: 100%;"></div><div class="auxbar bar bar3" style="width: 0%;"></div></div></td></tr>';
+			dataTable.getElementsByTagName('tbody')[0].innerHTML = '<tr id="mdl-progress-container"><td><div id="p2" class="mdl-progress mdl-js-progress mdl-progress__indeterminate is-upgraded" data-upgraded=",MaterialProgress"><div class="progressbar bar bar1" style="width: 0%;"></div><div class="bufferbar bar bar2" style="width: 100%;"></div><div class="auxbar bar bar3" style="width: 0%;"></div></div></td></tr>';
 
 		} else {
 			document.getElementById('mdl-progress-container').remove();
