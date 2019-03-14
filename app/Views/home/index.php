@@ -16,7 +16,7 @@
 		<script defer src="./js/dialog-polyfill.js"></script>
 		<!--/IE 11 does not support Material Design Dialog Component and must use dialog-polyfill-->
 
-		<script defer src="./js/all.js<?php echo '?'.time(); ?>"></script>
+		<script defer src="./js/all.js"></script>
 	</head>
 	<body>
 
