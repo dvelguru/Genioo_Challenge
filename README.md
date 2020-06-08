@@ -31,7 +31,3 @@ The user interface can be built using any frontend framework of choice.
 - Web application's look, feel and usability.
 - Bonus: use of additional user-interface features to improve the user experience.
 - Bonus: PHP Unit Tests.
-
-### Experience
-
-([http://svvy.ch/Genioo_Challenge/](http://svvy.ch/Genioo_Challenge/))
